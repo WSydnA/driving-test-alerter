@@ -1,9 +1,20 @@
-var casper = require('casper').create();
+'use strict';
+
+var casper = require('casper');
 var CONSTANTS = require('./constants');
 var DATA = require('../data');
 
+// Create casper instance
+casper = casper.create({
+  pageSettings: {
+    userAgent: CONSTANTS.BROWSING_DATA.USER_AGENT
+  },
+  logLevel: 'info',
+  verbose: true
+});
+
 // Go to first page and follow link
-casper.start(CONSTANTS.PAGES.START, function () {
+casper.start(CONSTANTS.BROWSING_DATA.START_PAGE, function () {
   this.echo(this.getTitle());
   casper.waitForSelector(CONSTANTS.SELECTORS.START_LINK, function () {
     this.click(CONSTANTS.SELECTORS.START_LINK);

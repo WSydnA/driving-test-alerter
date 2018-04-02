@@ -1,6 +1,8 @@
-exports.PAGES = {
-  // Initial URL
-  START: 'https://www.gov.uk/book-driving-test'
+exports.BROWSING_DATA = {
+  USER_AGENT: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36',
+  PROXY_IP_AND_PORT: '127.0.0.1:8000',
+  SERVER_PORT: '8080',
+  START_PAGE: 'https://www.gov.uk/book-driving-test'
 };
 
 exports.SELECTORS = {
