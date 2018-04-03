@@ -4,15 +4,17 @@ var exec = require('child_process').exec;
 var express = require('express')();
 var CONSTANTS = require('./constants');
 
+const prettify = str => `<pre>${str}</pre>`;
+
 express.get('/', (req, res) => {
   exec('npm run casper', function (error, stdout, stderr) {
     // Return errors if applicable
     if (error !== null) {
-      res.status(200).send(stdout).end();
+      res.status(200).send(prettify(stdout)).end();
       return;
     }
     // Return response
-    res.status(200).send(stdout).end();
+    res.status(200).send(prettify(stdout)).end();
   });
 });
 
