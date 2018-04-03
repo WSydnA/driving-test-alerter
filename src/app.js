@@ -4,10 +4,25 @@ var casper = require('casper');
 var CONSTANTS = require('./constants');
 var DATA = require('../data');
 
+var width = Math.floor(Math.random() * 1400) + 800;
+var height = Math.floor(Math.random() * 1000) + 600;
+
+var randomWait = function () {
+  return Math.floor(Math.random() * 1200) + 400;
+};
+
 // Create casper instance
 casper = casper.create({
   pageSettings: {
-    userAgent: CONSTANTS.BROWSING_DATA.USER_AGENT
+    userAgent: CONSTANTS.BROWSING_DATA.USER_AGENT,
+    javascriptEnabled: true,
+    loadImages: true,
+    loadPlugins: true,
+    allowMedia: true
+  },
+  viewportSize: {
+    width: width,
+    height: height
   },
   logLevel: 'info',
   verbose: true
@@ -17,9 +32,11 @@ casper = casper.create({
 casper.start(CONSTANTS.BROWSING_DATA.START_PAGE, function () {
   this.echo(this.getTitle());
   casper.waitForSelector(CONSTANTS.SELECTORS.START_LINK, function () {
-    this.click(CONSTANTS.SELECTORS.START_LINK);
+    this.wait(randomWait, function () {
+      this.click(CONSTANTS.SELECTORS.START_LINK);
+    });
   });
-})
+});
 
 // Stop if blocked or click car test button
 casper.waitForSelector(CONSTANTS.SELECTORS.BLOCKED_OR_SUCCESSFUL, function () {
@@ -28,7 +45,9 @@ casper.waitForSelector(CONSTANTS.SELECTORS.BLOCKED_OR_SUCCESSFUL, function () {
   }
   else {
     this.echo(this.getTitle());
-    this.click(CONSTANTS.SELECTORS.CAR_TEST_BUTTON);
+    this.wait(randomWait, function () {
+      this.click(CONSTANTS.SELECTORS.CAR_TEST_BUTTON);
+    });
   }
 });
 
@@ -40,13 +59,21 @@ casper.waitForSelector(CONSTANTS.SELECTORS.LICENCE_FIELD, function () {
   var formData = {};
   formData[licenceFieldSelector] = DATA.LICENCE_NUMBER;
   // Enter licence number
-  this.fillSelectors(CONSTANTS.SELECTORS.LICENCE_FORM, formData, false);
-  // Select no extended test
-  this.click(CONSTANTS.SELECTORS.NO_EXTENDED_TEST);
-  // Select no special needs
-  this.click(CONSTANTS.SELECTORS.NO_SPECIAL_NEEDS);
-  // Submit form
-  this.click(CONSTANTS.SELECTORS.LICENCE_SUBMIT);
+  this.wait(randomWait, function () {
+    this.fillSelectors(CONSTANTS.SELECTORS.LICENCE_FORM, formData, false);
+    // Select no extended test
+    this.wait(randomWait, function () {
+      this.click(CONSTANTS.SELECTORS.NO_EXTENDED_TEST);
+      // Select no special needs
+      this.wait(randomWait, function () {
+        this.click(CONSTANTS.SELECTORS.NO_SPECIAL_NEEDS);
+        // Submit form
+        this.wait(randomWait, function () {
+          this.click(CONSTANTS.SELECTORS.LICENCE_SUBMIT);
+        });
+      });
+    });
+  });
 });
 
 // Complete date and instructor form
@@ -54,19 +81,27 @@ casper.waitForSelector(CONSTANTS.SELECTORS.CALENDAR_TOGGLE, function () {
   this.echo(this.getTitle());
 
   // Select today's date
-  this.click(CONSTANTS.SELECTORS.CALENDAR_TOGGLE);
-  casper.waitForSelector(CONSTANTS.SELECTORS.CALENDAR_TODAY, function () {
-    this.click(CONSTANTS.SELECTORS.CALENDAR_TODAY);
+  this.wait(randomWait, function () {
+    this.click(CONSTANTS.SELECTORS.CALENDAR_TOGGLE);
+    casper.waitForSelector(CONSTANTS.SELECTORS.CALENDAR_TODAY, function () {
+      this.wait(randomWait, function () {
+        this.click(CONSTANTS.SELECTORS.CALENDAR_TODAY);
+        // Enter instructor's number, if available
+        if (DATA.INSTRUCTOR_NUMBER) {
+          var instructorFieldSelector = CONSTANTS.SELECTORS.INSTRUCTOR_FIELD;
+          var formData = {};
+          formData[instructorFieldSelector] = DATA.INSTRUCTOR_NUMBER;
+          this.wait(randomWait, function () {
+            this.fillSelectors(CONSTANTS.SELECTORS.LICENCE_FORM, formData, false);
+            // Submit form
+            this.wait(randomWait, function () {
+              this.click(CONSTANTS.SELECTORS.LICENCE_SUBMIT);
+            });
+          });
+        }
+      });
+    });
   });
-  // Enter instructor's number, if available
-  if (DATA.INSTRUCTOR_NUMBER) {
-    var instructorFieldSelector = CONSTANTS.SELECTORS.INSTRUCTOR_FIELD;
-    var formData = {};
-    formData[instructorFieldSelector] = DATA.INSTRUCTOR_NUMBER;
-    this.fillSelectors(CONSTANTS.SELECTORS.LICENCE_FORM, formData, false);
-  }
-  // Submit form
-  this.click(CONSTANTS.SELECTORS.LICENCE_SUBMIT);
 });
 
 // Complete test center form
@@ -77,12 +112,18 @@ casper.waitForSelector(CONSTANTS.SELECTORS.TEST_CENTER_FIELD, function () {
   var formData = {};
   formData[testCenterSelector] = DATA.TEST_CENTER_NAME;
   // Enter test center name
-  this.fillSelectors(CONSTANTS.SELECTORS.TEST_CENTER_FIELD, formData, false);
-  // Submit form
-  this.click(CONSTANTS.SELECTORS.TEST_CENTER_SUBMIT);
-  // Click test center link
-  casper.waitForSelector(CONSTANTS.SELECTORS.TEST_CENTER_LINK, function () {
-    this.click(CONSTANTS.SELECTORS.TEST_CENTER_LINK);
+  this.wait(randomWait, function () {
+    this.fillSelectors(CONSTANTS.SELECTORS.TEST_CENTER_FIELD, formData, false);
+    // Submit form
+    this.wait(randomWait, function () {
+      this.click(CONSTANTS.SELECTORS.TEST_CENTER_SUBMIT);
+      // Click test center link
+      casper.waitForSelector(CONSTANTS.SELECTORS.TEST_CENTER_LINK, function () {
+        this.wait(randomWait, function () {
+          this.click(CONSTANTS.SELECTORS.TEST_CENTER_LINK);
+        });
+      });
+    });
   });
 });
 
