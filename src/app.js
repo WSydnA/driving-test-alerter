@@ -4,17 +4,24 @@ var casper = require('casper');
 var CONSTANTS = require('./constants');
 var DATA = require('../data');
 
+var userAgentChoice = Math.floor(Math.random() * CONSTANTS.BROWSING_DATA.USER_AGENTS.length);
+var userAgent = CONSTANTS.BROWSING_DATA.USER_AGENTS[userAgentChoice];
 var width = Math.floor(Math.random() * 1400) + 800;
 var height = Math.floor(Math.random() * 1000) + 600;
 
 var randomWait = function () {
-  return Math.floor(Math.random() * 1200) + 400;
+  return Math.floor(Math.random() * 1200) + 2400;
 };
+
+// Log settings
+console.log('Using user agent ' + (userAgentChoice + 1) + ': ' + userAgent);
+console.log('Using screen dimensions ' + width + ' x ' + height);
+console.log();
 
 // Create casper instance
 casper = casper.create({
   pageSettings: {
-    userAgent: CONSTANTS.BROWSING_DATA.USER_AGENT,
+    userAgent: userAgent,
     javascriptEnabled: true,
     loadImages: true,
     loadPlugins: true,
@@ -24,8 +31,13 @@ casper = casper.create({
     width: width,
     height: height
   },
-  logLevel: 'info',
-  verbose: true
+  logLevel: 'debug',
+  verbose: true,
+  httpStatusHandlers: {
+    403: function () {
+      this.die('403 error - we\'ve been blocked :(');
+    }
+  }
 });
 
 // Go to first page and follow link
@@ -38,17 +50,18 @@ casper.start(CONSTANTS.BROWSING_DATA.START_PAGE, function () {
   });
 });
 
-// Stop if blocked or click car test button
-casper.waitForSelector(CONSTANTS.SELECTORS.BLOCKED_OR_SUCCESSFUL, function () {
-  if (this.exists(CONSTANTS.SELECTORS.BLOCKED_IFRAME)) {
-    this.die('Blocked :(');
-  }
-  else {
+// Stop if unavailable or click car test button
+casper.waitForSelector(
+  CONSTANTS.SELECTORS.CAR_TEST_BUTTON + ',' +
+  CONSTANTS.SELECTORS.UNAVAILABLE_NOTICE,
+  function () {
     this.echo(this.getTitle());
+    if (this.exists(CONSTANTS.SELECTORS.UNAVAILABLE_NOTICE)) {
+      this.die('Service is unavailable. Try again after 06:00 GMT.');
+    }
     this.wait(randomWait, function () {
       this.click(CONSTANTS.SELECTORS.CAR_TEST_BUTTON);
-    });
-  }
+  });
 });
 
 // Complete details form

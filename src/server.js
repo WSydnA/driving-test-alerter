@@ -10,7 +10,7 @@ express.get('/', (req, res) => {
   exec('npm run casper', function (error, stdout, stderr) {
     // Return errors if applicable
     if (error !== null) {
-      res.status(200).send(prettify(stdout)).end();
+      res.status(400).send(prettify(stdout) + prettify(stderr)).end();
       return;
     }
     // Return response
