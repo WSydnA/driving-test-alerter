@@ -1,8 +1,13 @@
 #!/bin/bash
 
+# Get firefox version from package.json
+FIREFOX_VERSION=$(SETTING=firefox $PWD/scripts/utils/grep_package_setting.sh)
+
+# Install Firefox
+echo "Installing Firefox $FIREFOX_VERSION"; echo ""
 apt-get update && \
 apt-get -y install wget && \
-wget http://ftp.mozilla.org/pub/firefox/releases/$FIREFOX_VERSION.0/linux-$(uname -m)/en-US/firefox-$FIREFOX_VERSION.0.tar.bz2 && \
-tar -xjf firefox-$FIREFOX_VERSION.0.tar.bz2.1 && \
-mv firefox /opt/ && \
-ln -s /opt/firefox/firefox /usr/bin/firefox
+rm firefox-$FIREFOX_VERSION.tar.bz2 -f && \
+wget http://ftp.mozilla.org/pub/firefox/releases/$FIREFOX_VERSION/linux-$(uname -m)/en-US/firefox-$FIREFOX_VERSION.tar.bz2 && \
+tar -xjf firefox-$FIREFOX_VERSION.tar.bz2 && \
+rm firefox-$FIREFOX_VERSION.tar.bz2 -f

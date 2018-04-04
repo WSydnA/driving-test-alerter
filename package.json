@@ -4,16 +4,21 @@
   "description": "Get alerts for driving test cancellations",
   "main": "src/app.js",
   "scripts": {
-    "preinstall": "FIREFOX_VERSION=56 ./scripts/preinstall.sh",
-    "start": "node src/server.js",
-    "casper": "SLIMERJSLAUNCHER=/usr/bin/firefox casperjs --engine=slimerjs ./src/app.js",
-    "deploy": "./scripts/deploy.sh"
+    "casper": "./scripts/casper.sh",
+    "deploy": "./scripts/deploy.sh",
+    "preinstall": "./scripts/preinstall.sh",
+    "postinstall": "./scripts/postinstall.sh",
+    "start": "./scripts/server.sh"
   },
   "author": "Andy Saunders-White",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/WSydnA/driving-test-alerter.git"
+  },
+  "engines": {
+    "firefox": "56.0",
+    "node": ">=8.9.4"
   },
   "dependencies": {
     "casperjs": "1.1.4",
